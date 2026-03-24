@@ -1,0 +1,56 @@
+version: "3"
+
+tasks:
+  lock:
+    desc: Lock dependencies
+    cmds:
+      - uv lock
+
+  sync:
+    desc: Install dependencies
+    deps:
+      - lock
+    cmds:
+      - uv sync
+
+  clean:
+    desc: Remove virtual environment
+    cmds:
+      - rm -rf .venv
+
+  licensecheck:
+    desc: |
+      Check that we only use software with commercial-friendly licenses.
+      Ignored, mainly due to licenses being unrecognized by `licensecheck`:
+        - n/a
+    cmds:
+      - >
+        uvx licensecheck --show-only-failing --zero
+        --only-licenses apache bsd isc mit unlicense
+
+  audit:
+    desc: Audit dependencies for known security vulnerabilities
+    cmds:
+      - uvx pip-audit
+
+  lint:
+    desc: Lint
+    cmds:
+      - uvx isort .
+      - uvx black .
+      - uvx ruff check .
+      - uvx ty check .
+
+  test:
+    desc: Run tests
+    cmds:
+      - uv run pytest .
+
+  ci:
+    desc: Everything that needs to succeed for continuous integration
+    cmds:
+      - task: sync
+      - task: audit
+      - task: licensecheck
+      - task: lint
+      - task: test
