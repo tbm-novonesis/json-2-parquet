@@ -22,11 +22,12 @@ tasks:
     desc: |
       Check that we only use software with commercial-friendly licenses.
       Ignored, mainly due to licenses being unrecognized by `licensecheck`:
-        - n/a
+        - certifi: MOZILLA PUBLIC LICENSE 2.0
     cmds:
       - >
         uvx licensecheck --show-only-failing --zero
         --only-licenses apache bsd isc mit unlicense
+        --ignore-packages certifi
 
   audit:
     desc: Audit dependencies for known security vulnerabilities
